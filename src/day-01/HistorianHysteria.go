@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
+	"../helper"
 	"fmt"
-	"log"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -12,27 +10,21 @@ import (
 
 func main() {
 
-	input, err := os.Open("src/day-01/puzzle.txt")
-	handleErr(err)
-
-	defer input.Close()
-
-	scanner := bufio.NewScanner(input)
-
 	var locationIds []int
 	var chiefNotes []int
 
-	for scanner.Scan() {
-		locations := strings.Split(scanner.Text(), "   ")
+	var fileHandler helper.LineHandler = func(line string) {
+		locations := strings.Split(line, "   ")
 
 		locationIds = readLocations(locationIds, locations[0])
 		chiefNotes = readLocations(chiefNotes, locations[1])
 	}
 
+	helper.ReadFile("day-01/puzzle.txt", fileHandler)
+
 	sort.Ints(locationIds)
 	sort.Ints(chiefNotes)
 
-	// Day One
 	calculateDistances(locationIds, chiefNotes)
 	calculateSimilarityScore(chiefNotes, locationIds)
 }
@@ -69,14 +61,8 @@ func calculateDistances(locationIds []int, chiefNotes []int) {
 func readLocations(locations []int, locCode string) []int {
 	locId, err := strconv.Atoi(locCode)
 
-	handleErr(err)
+	helper.HandleErr(err)
 
 	locations = append(locations, locId)
 	return locations
-}
-
-func handleErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }
